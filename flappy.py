@@ -7,14 +7,24 @@ import sys
 import pygame
 from pygame.locals import *
 
-# Initialize the bot
-bot = Bot()
 
-FPS = 60
+# player velocity, max velocity, downward accleration, accleration on flap
+playerMaxVelY =  10   # max vel along Y, max descend speed
+playerMinVelY =  -8   # min vel along Y, max ascend speed
+playerAccY    =   1   # players downward accleration
+playerFlapAcc =  -9   # players speed on flapping
+
+PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
+FacUp = 2.0
+FacBot = 3.0
+# Initialize the bot
+# bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*playerFlapAcc**2/2/abs(playerAccY), False)
+bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True)
+
+FPS = 500
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
-PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
 BASEY        = SCREENHEIGHT * 0.79
 # image, sound and hitmask  dicts
 IMAGES, SOUNDS, HITMASKS = {}, {}, {}
@@ -180,9 +190,9 @@ def showWelcomeAnimation():
         }
 
         # adjust playery, playerIndex, basex
-        if (loopIter + 1) % 5 == 0:
-            playerIndex = next(playerIndexGen)
-        loopIter = (loopIter + 1) % 30
+        # if (loopIter + 1) % 5 == 0:
+        #     playerIndex = next(playerIndexGen)
+        # loopIter = (loopIter + 1) % 30
         basex = -((-basex + 4) % baseShift)
         playerShm(playerShmVals)
 
@@ -227,10 +237,10 @@ def mainGame(movementInfo):
 
     # player velocity, max velocity, downward accleration, accleration on flap
     playerVelY    =  -9   # player's velocity along Y, default same as playerFlapped
-    playerMaxVelY =  10   # max vel along Y, max descend speed
-    playerMinVelY =  -8   # min vel along Y, max ascend speed
-    playerAccY    =   1   # players downward accleration
-    playerFlapAcc =  -9   # players speed on flapping
+    # playerMaxVelY =  10   # max vel along Y, max descend speed
+    # playerMinVelY =  -8   # min vel along Y, max ascend speed
+    # playerAccY    =   1   # players downward accleration
+    # playerFlapAcc =  -9   # players speed on flapping
     playerFlapped = False # True when player flaps
 
     playerHeight = IMAGES['player'][0].get_height()
@@ -278,14 +288,14 @@ def mainGame(movementInfo):
         playerMidPos = playerx + playerWidth / 2
         for pipe in upperPipes:
             pipeMidPos = pipe['x'] + IMAGES['pipe'][0].get_width() / 2
-            if pipeMidPos <= playerMidPos < pipeMidPos + 4:
+            if pipeMidPos <= playerMidPos < pipeMidPos + abs(pipeVelX):
                 score += 1
                 #SOUNDS['point'].play()
 
         # playerIndex basex change
-        if (loopIter + 1) % 3 == 0:
-            playerIndex = next(playerIndexGen)
-        loopIter = (loopIter + 1) % 30
+        # if (loopIter + 1) % 3 == 0:
+        #     playerIndex = next(playerIndexGen)
+        # loopIter = (loopIter + 1) % 30
         basex = -((-basex + 100) % baseShift)
 
         # player's movement
