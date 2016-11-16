@@ -1,4 +1,7 @@
 from itertools import cycle
+
+import numpy
+
 from bot import Bot
 
 import random
@@ -15,13 +18,15 @@ playerAccY    =   1   # players downward accleration
 playerFlapAcc =  -9   # players speed on flapping
 
 PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
-FacUp = 2.0
-FacBot = 3.0
+# FacUp = 2.0
+# FacBot = 3.0
+FacUp = 10.0
+FacBot = 10.0
 # Initialize the bot
 # bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*playerFlapAcc**2/2/abs(playerAccY), False)
 bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True)
 
-FPS = 500
+FPS = 300
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
@@ -260,7 +265,15 @@ def mainGame(movementInfo):
         #             playerFlapped = True
                     #SOUNDS['wing'].play()
 
-        if  bot.act(-playerx + myPipe['x'], - playery + myPipe['y'], playerVelY ):
+        # playerMaxVelY = 10  # max vel along Y, max descend speed
+        # playerMinVelY = -8  # min vel along Y, max ascend speed
+
+        xdiffReal = -playerx + myPipe['x'] + int(numpy.random.normal(0, 4.0))
+        ydiffReal = - playery + myPipe['y'] + int(numpy.random.normal(0, 4.0))
+        velReal = playerVelY + int(numpy.random.normal(0, 1.0))
+        velReal = max(playerMinVelY, velReal)
+        velReal = min(playerMaxVelY, velReal)
+        if  bot.act(xdiffReal, ydiffReal, velReal):
             if playery > -2 * playerHeight:
                 playerVelY = playerFlapAcc
                 playerFlapped = True
