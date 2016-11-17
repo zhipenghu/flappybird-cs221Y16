@@ -21,6 +21,7 @@ FacBot = 3.0
 # bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*playerFlapAcc**2/2/abs(playerAccY), False)
 bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True)
 
+# fps runs faster
 FPS = 500
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512

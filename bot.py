@@ -31,8 +31,10 @@ class Bot(object):
 
     def act(self, xdif, ydif, vel):
         # Chooses the best action with respect to the current state - Chooses 0 (don't flap) to tie-break
+        # don't fly too high
         if ydif >= self.upBound:
             return 0
+        # don't fly too low
         elif ydif <= self.botBound:
             return 1
         elif(self.enLearn):
@@ -55,6 +57,7 @@ class Bot(object):
         return self.last_state
 
 
+    # review for the basic q-learning algo
     def update_scores(self):
         #Update qvalues via iterating over experiences
         if(self.enLearn):
@@ -69,6 +72,8 @@ class Bot(object):
                 state = exp[0]
                 act = exp[1]
                 res_state = exp[2]
+                                
+                # for the first two 
                 if t == 1 or t == 2:
                     self.qvalues[state][act] = (1 - self.lr) * (self.qvalues[state][act]) + (self.lr) * (
                     self.r[1] + (self.discount) * max(self.qvalues[res_state]))
@@ -88,6 +93,7 @@ class Bot(object):
             self.dump_qvalues() # Dump q values (if game count % DUMPING_N == 0)
             self.moves = []  #clear history after updating strategies
 
+    # consider changing this to functional
     def map_state(self, xdif, ydif, vel):
         # Map the (xdif, ydif, vel) to the respective state, with regards to the grids
         # The state is a string, "xdif_ydif_vel"
