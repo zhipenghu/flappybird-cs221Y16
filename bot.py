@@ -18,6 +18,7 @@ class Bot(object):
         self.upBound = _upBound
         self.botBound = _botBound
         self.enLearn = _learning
+        self.average = 0.0
 
     def load_qvalues(self):
         # Load q values from a JSON file
@@ -55,7 +56,7 @@ class Bot(object):
         return self.last_state
 
 
-    def update_scores(self):
+    def update_scores(self, _score):
         #Update qvalues via iterating over experiences
         if(self.enLearn):
             history = list(reversed(self.moves))
@@ -85,6 +86,8 @@ class Bot(object):
                 t += 1
 
             self.gameCNT += 1 #increase game count
+            self.average = (self.average * (self.gameCNT - 1) + _score)/self.gameCNT
+            print 'Average Score is %d' %(self.average)
             self.dump_qvalues() # Dump q values (if game count % DUMPING_N == 0)
             self.moves = []  #clear history after updating strategies
 

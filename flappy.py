@@ -24,9 +24,10 @@ FacUp = 10.0
 FacBot = 10.0
 # Initialize the bot
 # bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*playerFlapAcc**2/2/abs(playerAccY), False)
+en_noise = False
 bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True)
 
-FPS = 300
+FPS = 5000
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
@@ -267,24 +268,30 @@ def mainGame(movementInfo):
 
         # playerMaxVelY = 10  # max vel along Y, max descend speed
         # playerMinVelY = -8  # min vel along Y, max ascend speed
+        if(en_noise):
+            xdiffReal = -playerx + myPipe['x'] + int(numpy.random.normal(0, 4.0))
+            ydiffReal = - playery + myPipe['y'] + int(numpy.random.normal(0, 4.0))
+            velReal = playerVelY + int(numpy.random.normal(0, 1.0))
+            velReal = max(playerMinVelY, velReal)
+            velReal = min(playerMaxVelY, velReal)
 
-        xdiffReal = -playerx + myPipe['x'] + int(numpy.random.normal(0, 4.0))
-        ydiffReal = - playery + myPipe['y'] + int(numpy.random.normal(0, 4.0))
-        velReal = playerVelY + int(numpy.random.normal(0, 1.0))
-        velReal = max(playerMinVelY, velReal)
-        velReal = min(playerMaxVelY, velReal)
-        if  bot.act(xdiffReal, ydiffReal, velReal):
+        else:
+            xdiffReal = - playerx + myPipe['x']
+            ydiffReal = - playery + myPipe['y']
+            velReal = playerVelY
+
+        if bot.act(xdiffReal, ydiffReal, velReal):
             if playery > -2 * playerHeight:
                 playerVelY = playerFlapAcc
                 playerFlapped = True
-                #SOUNDS['wing'].play()
+                # SOUNDS['wing'].play()
 
         # check for crash here
         crashTest = checkCrash({'x': playerx, 'y': playery, 'index': playerIndex},
                                upperPipes, lowerPipes)
         if crashTest[0]:
             # Update the q scoresd1e2444d8dfabc2c823ac7443bfeede32ced3854
-            bot.update_scores()
+            bot.update_scores(score)
 
             return {
                 'y': playery,
