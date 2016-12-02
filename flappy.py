@@ -10,7 +10,6 @@ import sys
 import pygame
 from pygame.locals import *
 
-
 # player velocity, max velocity, downward accleration, accleration on flap
 playerMaxVelY =  10   # max vel along Y, max descend speed
 playerMinVelY =  -8   # min vel along Y, max ascend speed
@@ -20,14 +19,15 @@ playerFlapAcc =  -9   # players speed on flapping
 PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
 # FacUp = 2.0
 # FacBot = 3.0
-FacUp = 10.0
-FacBot = 10.0
+FacUp = 50.0
+FacBot = 50.0
 # Initialize the bot
-# bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*playerFlapAcc**2/2/abs(playerAccY), False)
-en_noise = False
-bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True)
+en_noise = True
+en_feature = False
+en_epsilon = False
+bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True, en_feature, en_epsilon)
 
-FPS = 5000
+FPS = 60
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
@@ -269,12 +269,11 @@ def mainGame(movementInfo):
         # playerMaxVelY = 10  # max vel along Y, max descend speed
         # playerMinVelY = -8  # min vel along Y, max ascend speed
         if(en_noise):
-            xdiffReal = -playerx + myPipe['x'] + int(numpy.random.normal(0, 4.0))
-            ydiffReal = - playery + myPipe['y'] + int(numpy.random.normal(0, 4.0))
-            velReal = playerVelY + int(numpy.random.normal(0, 1.0))
+            xdiffReal = int((-playerx + myPipe['x']) * numpy.random.normal(1, 0.02))
+            ydiffReal = int((-playery + myPipe['y']) * numpy.random.normal(1, 0.02))
+            velReal = int(playerVelY * numpy.random.normal(1, 0.02))
             velReal = max(playerMinVelY, velReal)
             velReal = min(playerMaxVelY, velReal)
-
         else:
             xdiffReal = - playerx + myPipe['x']
             ydiffReal = - playery + myPipe['y']
@@ -376,9 +375,9 @@ def showGameOverScreen(crashInfo):
     upperPipes, lowerPipes = crashInfo['upperPipes'], crashInfo['lowerPipes']
 
     # play hit and die sounds
-    SOUNDS['hit'].play()
-    if not crashInfo['groundCrash']:
-        SOUNDS['die'].play()
+    # SOUNDS['hit'].play()
+    # if not crashInfo['groundCrash']:
+    #     SOUNDS['die'].play()
 
     while True:
         ''' De-activated press key functionality
