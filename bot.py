@@ -1,3 +1,4 @@
+import csv
 import json
 import random
 from collections import defaultdict
@@ -53,7 +54,8 @@ class Bot(object):
             return random.randint(0, 1)
 
         if (self.enEpsilonGreedy):
-            epilson = 0.1 * max((1 - float(self.gameCNT) / 1000.0), 0)
+            epilson = 0.1 * max((1 - 1.0 * self.gameCNT / 3000.0), 0)
+            # epilson = 0.01
         else:
             epilson = 0.0
 
@@ -120,6 +122,9 @@ class Bot(object):
             self.gameCNT += 1 #increase game count
             self.average = (self.average * (self.gameCNT - 1) + _score)/self.gameCNT
             print 'Average Score is %d, current is %d' %(self.average, _score)
+            with open('result.csv', 'a') as csvfile:
+                writer = csv.writer(csvfile, delimiter = ',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+                writer.writerow([_score])
             if self.enFeature:
                 print self.weights
             else: self.dump_qvalues() # Dump q values (if game count % DUMPING_N == 0)

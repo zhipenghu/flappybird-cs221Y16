@@ -22,12 +22,14 @@ PIPEGAPSIZE  = 100 # gap between upper and lower part of pipe
 FacUp = 50.0
 FacBot = 50.0
 # Initialize the bot
-en_noise = True
+en_noise = False
 en_feature = False
-en_epsilon = False
+en_epsilon = True
 bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True, en_feature, en_epsilon)
 
-FPS = 60
+ExpectedCNT = 3000
+
+FPS = 5000
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
@@ -111,6 +113,8 @@ def main():
     SOUNDS['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
     SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
 
+    open('result.csv', 'w').close()
+
     while True:
         # select random background sprites
         randBg = random.randint(0, len(BACKGROUNDS_LIST) - 1)
@@ -148,6 +152,8 @@ def main():
         movementInfo = showWelcomeAnimation()
         crashInfo = mainGame(movementInfo)
         showGameOverScreen(crashInfo)
+        if (bot.gameCNT >= ExpectedCNT):
+            break
 
 
 def showWelcomeAnimation():
@@ -269,11 +275,13 @@ def mainGame(movementInfo):
         # playerMaxVelY = 10  # max vel along Y, max descend speed
         # playerMinVelY = -8  # min vel along Y, max ascend speed
         if(en_noise):
-            xdiffReal = int((-playerx + myPipe['x']) * numpy.random.normal(1, 0.02))
+            xdiffReal = - playerx + myPipe['x']
+            velReal = playerVelY
+            # xdiffReal = int((-playerx + myPipe['x']) * numpy.random.normal(1, 0.02))
             ydiffReal = int((-playery + myPipe['y']) * numpy.random.normal(1, 0.02))
-            velReal = int(playerVelY * numpy.random.normal(1, 0.02))
-            velReal = max(playerMinVelY, velReal)
-            velReal = min(playerMaxVelY, velReal)
+            # velReal = int(playerVelY * numpy.random.normal(1, 0.02))
+            # velReal = max(playerMinVelY, velReal)
+            # velReal = min(playerMaxVelY, velReal)
         else:
             xdiffReal = - playerx + myPipe['x']
             ydiffReal = - playery + myPipe['y']
