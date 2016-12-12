@@ -24,12 +24,12 @@ FacBot = 50.0
 # Initialize the bot
 en_noise = False
 en_feature = False
-en_epsilon = True
+en_epsilon = False
 bot = Bot(FacUp*PIPEGAPSIZE, PIPEGAPSIZE - FacBot*abs(playerFlapAcc)**2/2/abs(playerAccY), True, en_feature, en_epsilon)
 
-ExpectedCNT = 3000
+ExpectedCNT = 1500
 
-FPS = 5000
+FPS = 6000
 SCREENWIDTH  = 288
 SCREENHEIGHT = 512
 # amount by which base can maximum shift to left
@@ -113,7 +113,7 @@ def main():
     SOUNDS['swoosh'] = pygame.mixer.Sound('assets/audio/swoosh' + soundExt)
     SOUNDS['wing']   = pygame.mixer.Sound('assets/audio/wing' + soundExt)
 
-    open('result.csv', 'w').close()
+    # open('result.csv', 'w').close()
 
     while True:
         # select random background sprites
@@ -194,7 +194,7 @@ def showWelcomeAnimation():
                     'playerIndexGen': playerIndexGen,
                 }
         '''
-        #SOUNDS['wing'].play()
+        SOUNDS['wing'].play()
         return {
             'playery': playery + playerShmVals['val'],
             'basex': basex,
